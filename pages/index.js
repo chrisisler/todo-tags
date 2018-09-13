@@ -1,54 +1,88 @@
+import { Component } from 'react'
 import Head from 'next/head'
 
-// create
-// update
-// delete
+let schema = () => ({
+  tags: [
+    {
+      name: 'fake-tag-name-string',
+      color: 'fake-tag-hex-color',
+    },
+  ],
+  todos: [
+    {
+      title: 'fake-todo-title-string',
+      done: 'fake-todo-done-boolean',
+      tags: [],
+    },
+  ],
+})
 
-let actions = {
-  tags: {
-    create() {},
-    update() {},
-    delete() {},
-  },
-  todos: {
-    create() {},
-    update() {},
-    delete() {},
-  },
+export default class extends Component {
+  state = schema()
+
+  actions = {
+    tags: {
+      create: () => {},
+      update: () => {},
+      delete: () => {},
+    },
+    todos: {
+      create: event => {
+        let title = event.currentTarget.value
+        if (title.length < 3) {
+          return
+        }
+      },
+      update: () => {},
+      delete: () => {},
+    },
+  }
+
+  render() {
+    let { actions, state } = this
+
+    return (
+      <div id="app">
+        <GlobalStyles />
+        <ScopedStyles />
+
+        <Head>
+          <title>Todo Tags App</title>
+        </Head>
+
+        <h1>Todo Tags App</h1>
+
+        <input
+          type="text"
+          id="todo-input"
+          placeholder="What needs to be done?"
+          onKeyDown={actions.todos.create}
+        />
+      </div>
+    )
+  }
 }
-
-export default () => (
-  <main>
-    <GlobalStyles />
-    <ScopedStyles />
-
-    <Head>
-      <title>Todo Tags App</title>
-    </Head>
-
-    <h1>Todo Tags App</h1>
-
-    <input id="todo-input" placeholder="What needs to be done?" />
-  </main>
-)
 
 let ScopedStyles = () => (
   <style jsx>{`
+    #app {
+      padding: 0 16px;
+    }
+
     #todo-input {
-      font-size: inherit;
-      width: 100vw;
+      margin: 0;
+      padding: 8px 24px;
+      color: inherit;
+      background-color: transparent;
+      border: none;
+      border-bottom: 2px solid black;
+      border-radius: 3px;
     }
   `}</style>
 )
 
 let GlobalStyles = () => (
   <style jsx global>{`
-    *,
-    *:before,
-    *:after {
-      box-sizing: inherit;
-    }
-
     html {
       box-sizing: border-box;
       font-size: 16px;
@@ -58,6 +92,12 @@ let GlobalStyles = () => (
       color: #eee;
       line-height: 1.15;
       -webkit-text-size-adjust: 100%;
+    }
+
+    *,
+    *:before,
+    *:after {
+      box-sizing: inherit;
     }
 
     body {

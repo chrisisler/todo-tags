@@ -11,3 +11,7 @@ yarn dev
 
 # Then `localhost:3000` in your browser.
 ```
+
+## Fix
+
+- View width css is far too wide.
