@@ -1,11 +1,13 @@
 # Todo Tags
 
-> Todo app with tagging.
+**Todo app with tagging.**
 
 Built using [Next](nextjs.org).
 
-## Do it live
+## Dev
 
 ```sh
 yarn dev
+
+# Then `localhost:3000` in your browser.
 ```
