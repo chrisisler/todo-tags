@@ -1,0 +1,20 @@
+{
+  "name": "todo-tags",
+  "version": "0.1.0",
+  "description": "Todo app with tagging.",
+  "main": "index.js",
+  "repository": "git@github.com:chrisisler/todo-tags",
+  "author": "chrisisler <christopherisler1@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^6.1.2",
+    "react": "^16.5.0",
+    "react-dom": "^16.5.0"
+  }
+}

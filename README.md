@@ -1,2 +1,11 @@
-# todo-tags
-Todo app with tags feature because I need it
+# Todo Tags
+
+> Todo app with tagging.
+
+Built using [Next](nextjs.org).
+
+## Do it live
+
+```sh
+yarn dev
+```
