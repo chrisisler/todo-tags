@@ -77,6 +77,8 @@ let ScopedStyles = () => (
       border: none;
       border-bottom: 2px solid black;
       border-radius: 3px;
+
+      width: 100%;
     }
   `}</style>
 )
@@ -87,11 +89,12 @@ let GlobalStyles = () => (
       box-sizing: border-box;
       font-size: 16px;
       font-weight: 200;
-      background: #101010;
       font-family: sans-serif;
-      color: #eee;
       line-height: 1.15;
       -webkit-text-size-adjust: 100%;
+
+      // background-color: #101010;
+      // color: #eee;
     }
 
     *,
@@ -103,6 +106,12 @@ let GlobalStyles = () => (
     body {
       margin: 0;
       padding: 0.2rem;
+    }
+
+    html,
+    body {
+      height: 100vh;
+      width: 100vw;
     }
 
     h1 {
