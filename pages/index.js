@@ -2,17 +2,22 @@ import { Component } from 'react'
 import Head from 'next/head'
 
 let schema = () => ({
-  tags: [
-    {
-      name: 'fake-tag-name-string',
-      color: 'fake-tag-hex-color',
-    },
-  ],
   todos: [
     {
       title: 'fake-todo-title-string',
       done: 'fake-todo-done-boolean',
       tags: [],
+    },
+    {
+      title: 'fake-todo-title-string2',
+      done: 'fake-todo-done-boolean',
+      tags: [],
+    },
+  ],
+  tags: [
+    {
+      name: 'fake-tag-name-string',
+      color: 'fake-tag-hex-color',
     },
   ],
 })
@@ -32,6 +37,8 @@ export default class extends Component {
         if (title.length < 3) {
           return
         }
+        let todos = this.state.todos.concat({ title, done: false })
+        this.setState(todos)
       },
       update: () => {},
       delete: () => {},
@@ -39,7 +46,18 @@ export default class extends Component {
   }
 
   render() {
-    let { actions, state } = this
+    // prettier-ignore
+    let {
+      actions,
+      state: { todos, tags },
+    } = this
+
+    // prettier-ignore
+    let rows = todos.map(({ title, done }) => (
+      <li>
+        {title}
+      </li>
+    ))
 
     return (
       <div id="app">
@@ -54,10 +72,14 @@ export default class extends Component {
 
         <input
           type="text"
-          id="todo-input"
+          id="new-todo-input"
           placeholder="What needs to be done?"
           onKeyDown={actions.todos.create}
         />
+
+        <section>
+          <ul className="todo-list">{rows}</ul>
+        </section>
       </div>
     )
   }
@@ -66,19 +88,38 @@ export default class extends Component {
 let ScopedStyles = () => (
   <style jsx>{`
     #app {
-      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
-    #todo-input {
+    #new-todo-input {
+      font-size: 20px;
       margin: 0;
       padding: 8px 24px;
       color: inherit;
       background-color: transparent;
+      text-align: center;
       border: none;
-      border-bottom: 2px solid black;
-      border-radius: 3px;
+      border-bottom: 2px solid #777;
+      border-radius: 0;
+      min-width: auto;
+      width: 60%;
+    }
 
-      width: 100%;
+    section {
+      padding: 32px;
+    }
+
+    ul.todo-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    h1 {
+      font-weight: 300;
     }
   `}</style>
 )
@@ -92,9 +133,10 @@ let GlobalStyles = () => (
       font-family: sans-serif;
       line-height: 1.15;
       -webkit-text-size-adjust: 100%;
+      letter-spacing: 0.6px;
 
-      // background-color: #101010;
-      // color: #eee;
+      background-color: #101010;
+      color: #eee;
     }
 
     *,
@@ -103,15 +145,12 @@ let GlobalStyles = () => (
       box-sizing: inherit;
     }
 
-    body {
-      margin: 0;
-      padding: 0.2rem;
-    }
-
     html,
     body {
       height: 100vh;
       width: 100vw;
+      padding: 0;
+      margin: 0;
     }
 
     h1 {
