@@ -12,6 +12,12 @@ yarn dev
 # Then `localhost:3000` in your browser.
 ```
 
-## Fix
+## To do
 
-- View width css is far too wide.
+- Add update feature for todos.
+- Prop based css?
+
+## Learned
+
+- The `<label>` html tag exists.
+- CSS is hard (reaffirmation).
