@@ -46,8 +46,11 @@ export default class extends Component {
       update: event => {
         console.log('double clicked')
       },
-      delete: event => {
-        console.log('todos.delete() action')
+      delete: title => {
+        // Assumes titles are unique.
+        this.setState({
+          todos: this.state.todos.filter(todo => todo.title !== title),
+        })
       },
     },
   }
@@ -64,7 +67,10 @@ export default class extends Component {
       <li onDoubleClick={actions.todos.update}>
         <div className="read-todo">
           <label>{title}</label>
-          <button className="delete-todo" onClick={actions.todos.delete}>
+          <button
+            className="delete-todo"
+            onClick={_ => actions.todos.delete(title)}
+          >
             X
           </button>
         </div>
@@ -156,16 +162,16 @@ let ScopedStyles = () => (
 
     .todo-list li .delete-todo {
       border: none;
-      color: red;
-
       position: absolute;
       right: 24px;
       margin-top: 4px;
-      opacity: 0.4;
+      opacity: 0.2;
+      color: orange;
     }
     .todo-list li .delete-todo:hover {
       opacity: 1;
       cursor: pointer;
+      color: red;
     }
 
     h1 {
@@ -183,7 +189,7 @@ let GlobalStyles = () => (
       letter-spacing: 0.6px;
 
       background-color: #101010;
-      color: #eee;
+      color: #c6e2ff;
     }
 
     *,
