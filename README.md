@@ -14,10 +14,10 @@ yarn dev
 
 ## To do
 
-- Add update feature for todos.
-- Prop based css?
+- Write tags feature
+- Write tests
 
 ## Learned
 
-- The `<label>` html tag exists.
-- CSS is hard (reaffirmation).
+- The `<label>` html tag exists
+- CSS is hard (reaffirmation)

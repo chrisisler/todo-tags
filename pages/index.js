@@ -34,20 +34,42 @@ export default class extends Component {
     todos: {
       create: event => {
         let title = event.currentTarget.value
-        if (title.length < 3) {
-          return
-        }
-        if (event.key === 'Enter') {
-          this.setState({
-            todos: this.state.todos.concat({ title, done: false }),
-          })
+        let { todos } = this.state
+        if (validTitle(title, todos)) {
+          if (event.key === 'Enter') {
+            this.setState({
+              todos: todos.concat({ title, done: false }),
+            })
+            event.currentTarget.value = ''
+          }
         }
       },
-      update: event => {
-        console.log('double clicked')
+      doubleClicked: event => {
+        if (this.doubleClickedRef !== void 0) {
+          this.doubleClickedRef.classList.remove('updating')
+        }
+        let todoElement = event.currentTarget
+        this.doubleClickedRef = todoElement
+        todoElement.classList.add('updating')
+      },
+      update: (event, index) => {
+        let updatedTitle = event.currentTarget.value
+        let { todos } = this.state
+        if (validTitle(updatedTitle, todos)) {
+          if (event.key === 'Enter' || event.type === 'blur') {
+            let updatedTodos = todos.slice()
+            updatedTodos[index].title = updatedTitle
+            this.setState({ todos: updatedTodos })
+            this.doubleClickedRef.classList.remove('updating')
+          }
+        } else {
+          if (event.type === 'blur') {
+            this.doubleClickedRef.classList.remove('updating')
+          }
+        }
       },
       delete: title => {
-        // Assumes titles are unique.
+        // Assumes titles are unique!
         this.setState({
           todos: this.state.todos.filter(todo => todo.title !== title),
         })
@@ -63,8 +85,8 @@ export default class extends Component {
     } = this
 
     // TODO: tags
-    let rows = todos.map(({ title, done, tags }) => (
-      <li onDoubleClick={actions.todos.update}>
+    let rows = todos.map(({ title, done, tags }, index) => (
+      <li onDoubleClick={actions.todos.doubleClicked}>
         <div className="read-todo">
           <label>{title}</label>
           <button
@@ -74,7 +96,12 @@ export default class extends Component {
             X
           </button>
         </div>
-        <input className="update-todo" value={title} />
+        <input
+          className="update-todo"
+          defaultValue={title}
+          onKeyDown={event => actions.todos.update(event, index)}
+          onBlur={event => actions.todos.update(event, index)}
+        />
       </li>
     ))
 
@@ -148,12 +175,23 @@ let ScopedStyles = () => (
       margin: 0;
       padding: 0;
       list-style: none;
+      user-select: none;
     }
 
     .todo-list li {
       position: relative;
       border-bottom: 1px solid #${hexGray};
       padding: 16px 24px;
+    }
+
+    .todo-list li.updating .update-todo {
+      display: block;
+      background: transparent;
+      color: inherit;
+      width: 100%;
+      border: 1px solid #${hexGray};
+      padding: 8px 16px;
+      margin-top: 8px;
     }
 
     .todo-list li .update-todo {
@@ -242,3 +280,7 @@ let GlobalStyles = () => (
     }
   `}</style>
 )
+
+function validTitle(string, todos) {
+  return string.length >= 1 && !todos.some(todo => todo.title === string)
+}
