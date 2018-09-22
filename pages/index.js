@@ -1,27 +1,6 @@
 import { Component } from 'react'
 import Head from 'next/head'
 
-let schema = () => ({
-  todos: [
-    {
-      title: 'fake-todo-title-string',
-      done: 'fake-todo-done-boolean',
-      tags: [],
-    },
-    {
-      title: 'fake-todo-title-string2',
-      done: 'fake-todo-done-boolean',
-      tags: [],
-    },
-  ],
-  tags: [
-    {
-      name: 'fake-tag-name-string',
-      color: 'fake-tag-hex-color',
-    },
-  ],
-})
-
 export default class extends Component {
   state = schema()
 
@@ -37,9 +16,8 @@ export default class extends Component {
         let { todos } = this.state
         if (validTitle(title, todos)) {
           if (event.key === 'Enter') {
-            this.setState({
-              todos: todos.concat({ title, done: false }),
-            })
+            let todo = { title, done: false }
+            this.setState({ todos: todos.concat(todo) })
             event.currentTarget.value = ''
           }
         }
@@ -48,9 +26,11 @@ export default class extends Component {
         if (this.doubleClickedRef !== void 0) {
           this.doubleClickedRef.classList.remove('updating')
         }
-        let todoElement = event.currentTarget
-        this.doubleClickedRef = todoElement
-        todoElement.classList.add('updating')
+        this.doubleClickedRef = event.currentTarget
+        this.doubleClickedRef.classList.add('updating')
+        document
+          .querySelector('.todo-list li.updating input.update-todo')
+          .focus()
       },
       update: (event, index) => {
         let updatedTitle = event.currentTarget.value
@@ -70,9 +50,17 @@ export default class extends Component {
       },
       delete: title => {
         // Assumes titles are unique!
-        this.setState({
-          todos: this.state.todos.filter(todo => todo.title !== title),
-        })
+        let todos = this.state.todos.filter(todo => todo.title !== title)
+        this.setState({ todos })
+      },
+      tags: {
+        // add: () => {},
+        remove: (todoIndex, tagIndex) => {
+          // There's a way to do this with better runtime analysis.
+          let todos = this.state.todos.slice()
+          todos[todoIndex].tags.splice(tagIndex, 1)
+          this.setState({ todos })
+        },
       },
     },
   }
@@ -84,26 +72,46 @@ export default class extends Component {
       state: { todos, tags },
     } = this
 
-    // TODO: tags
-    let rows = todos.map(({ title, done, tags }, index) => (
-      <li onDoubleClick={actions.todos.doubleClicked}>
-        <div className="read-todo">
-          <label>{title}</label>
-          <button
-            className="delete-todo"
-            onClick={_ => actions.todos.delete(title)}
-          >
-            X
-          </button>
-        </div>
-        <input
-          className="update-todo"
-          defaultValue={title}
-          onKeyDown={event => actions.todos.update(event, index)}
-          onBlur={event => actions.todos.update(event, index)}
-        />
-      </li>
-    ))
+    let renderedTodos = todos.map((todo, todoIndex) => {
+      let renderedTags =
+        todo.tags.length &&
+        todo.tags.map((tag, tagIndex) => {
+          return (
+            <li key={tag.name}>
+              <div>
+                <label>{tag.name}</label>
+                <button
+                  className="remove-tag"
+                  onClick={_ => actions.todos.tags.remove(todoIndex, tagIndex)}
+                >
+                  X
+                </button>
+              </div>
+            </li>
+          )
+        })
+
+      return (
+        <li onDoubleClick={actions.todos.doubleClicked}>
+          <div>
+            <label>{todo.title}</label>
+            <button
+              className="delete-todo"
+              onClick={_ => actions.todos.delete(todo.title)}
+            >
+              X
+            </button>
+          </div>
+          {!!renderedTags && <ul className="tags">{renderedTags}</ul>}
+          <input
+            className="update-todo"
+            defaultValue={todo.title}
+            onKeyDown={event => actions.todos.update(event, todoIndex)}
+            onBlur={event => actions.todos.update(event, todoIndex)}
+          />
+        </li>
+      )
+    })
 
     return (
       <div id="app">
@@ -125,7 +133,7 @@ export default class extends Component {
           />
 
           <section>
-            <ul className="todo-list">{rows}</ul>
+            <ul className="todo-list">{renderedTodos}</ul>
           </section>
         </section>
       </div>
@@ -184,6 +192,35 @@ let ScopedStyles = () => (
       padding: 16px 24px;
     }
 
+    .todo-list li .tags {
+      padding: 0;
+      list-style: none;
+      font-size: 14px;
+      display: flex;
+    }
+
+    .todo-list li .tags li {
+      border: 1px solid #333;
+      width: fit-content;
+      padding: 0 28px 0 16px;
+      margin: 16px 8px 0 8px;
+    }
+
+    .todo-list li .tags li .remove-tag {
+      margin-top: 7px;
+      border: none;
+      position: absolute;
+      color: orange;
+      opacity: 0.2;
+      right: 8px;
+    }
+    .todo-list li .tags li .remove-tag:hover {
+      opacity: 1;
+      cursor: pointer;
+      color: red;
+      font-weight: bolder;
+    }
+
     .todo-list li.updating .update-todo {
       display: block;
       background: transparent;
@@ -210,6 +247,7 @@ let ScopedStyles = () => (
       opacity: 1;
       cursor: pointer;
       color: red;
+      font-weight: bolder;
     }
 
     h1 {
@@ -283,4 +321,36 @@ let GlobalStyles = () => (
 
 function validTitle(string, todos) {
   return string.length >= 1 && !todos.some(todo => todo.title === string)
+}
+
+function schema() {
+  return {
+    todos: [
+      {
+        title: 'fake-todo-title-string',
+        done: false,
+        tags: [],
+      },
+      {
+        title: 'fake-todo-title-string2',
+        done: false,
+        tags: [
+          {
+            name: 'major problem',
+          },
+          {
+            name: 'good first problem',
+          },
+        ],
+      },
+    ],
+    tags: [
+      {
+        name: 'major problem',
+      },
+      {
+        name: 'good first problem',
+      },
+    ],
+  }
 }

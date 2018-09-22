@@ -16,8 +16,10 @@ yarn dev
 
 - Write tags feature
 - Write tests
+- Set placeholder of todo input as clipboard contents, fallback to normal placeholder
 
 ## Learned
 
 - The `<label>` html tag exists
-- CSS is hard (reaffirmation)
+- CSS is hard (duh)
+- CSS duplication can be overdone and underutilized (tough balance)
