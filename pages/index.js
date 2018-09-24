@@ -26,7 +26,7 @@ export default class extends Component {
         if (this.doubleClickedRef !== void 0) {
           this.doubleClickedRef.classList.remove('updating')
         }
-        this.doubleClickedRef = event.currentTarget
+        this.doubleClickedRef = event.currentTarget.parentNode
         this.doubleClickedRef.classList.add('updating')
         document
           .querySelector('.todo-list li.updating input.update-todo')
@@ -92,8 +92,8 @@ export default class extends Component {
         })
 
       return (
-        <li onDoubleClick={actions.todos.doubleClicked}>
-          <div>
+        <li key={todo.title}>
+          <div onDoubleClick={actions.todos.doubleClicked}>
             <label>{todo.title}</label>
             <button
               className="delete-todo"
