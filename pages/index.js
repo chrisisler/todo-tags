@@ -3,12 +3,23 @@ import Head from 'next/head'
 
 export default class extends Component {
   state = schema()
-
   actions = {
     tags: {
-      create: () => {},
-      update: () => {},
-      delete: () => {},
+      create: event => {
+        let name = event.currentTarget.value
+        let { tags } = this.state
+        if (name.length >= 1 && !tags.some(tag => tag.name === name)) {
+          if (event.key === 'Enter') {
+            let tag = { name }
+            this.setState({ tags: tags.concat(tag) })
+            event.currentTarget.value = ''
+          }
+        }
+      },
+      delete: tagName => {
+        let tags = this.state.tags.filter(tag => tag.name !== tagName)
+        this.setState({ tags })
+      },
     },
     todos: {
       create: event => {
@@ -28,9 +39,7 @@ export default class extends Component {
         }
         this.doubleClickedRef = event.currentTarget.parentNode
         this.doubleClickedRef.classList.add('updating')
-        document
-          .querySelector('.todo-list li.updating input.update-todo')
-          .focus()
+        document.querySelector('.list li.updating input.update-todo').focus()
       },
       update: (event, index) => {
         let updatedTitle = event.currentTarget.value
@@ -96,7 +105,7 @@ export default class extends Component {
           <div onDoubleClick={actions.todos.doubleClicked}>
             <label>{todo.title}</label>
             <button
-              className="delete-todo"
+              className="delete"
               onClick={_ => actions.todos.delete(todo.title)}
             >
               X
@@ -114,7 +123,7 @@ export default class extends Component {
     })
 
     return (
-      <div id="app">
+      <div id="flex-center">
         <GlobalStyles />
         <ScopedStyles />
 
@@ -124,18 +133,43 @@ export default class extends Component {
 
         <h1>Todo Tags App</h1>
 
-        <section className="container">
+        <main className="container">
           <input
             type="text"
-            id="new-todo-input"
+            className="create-state-input"
             placeholder="What needs to be done?"
             onKeyDown={actions.todos.create}
           />
 
           <section>
-            <ul className="todo-list">{renderedTodos}</ul>
+            <ul className="list">{renderedTodos}</ul>
           </section>
-        </section>
+
+          <section>
+            <input
+              type="text"
+              className="create-state-input"
+              placeholder="Create a new tag"
+              onKeyDown={actions.tags.create}
+            />
+
+            <section>
+              <ul className="list">
+                {tags.map(tag => (
+                  <li key={tag.name}>
+                    <label>{tag.name}</label>
+                    <button
+                      className="delete"
+                      onClick={_ => actions.tags.delete(tag.name)}
+                    >
+                      X
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </section>
+        </main>
       </div>
     )
   }
@@ -145,14 +179,14 @@ const hexGray = '777'
 
 let ScopedStyles = () => (
   <style jsx>{`
-    #app {
+    #flex-center {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
     }
 
-    #new-todo-input {
+    .create-state-input {
       font: inherit;
       font-size: 22px;
       color: inherit;
@@ -169,44 +203,44 @@ let ScopedStyles = () => (
       outline: none;
     }
 
-    .container {
+    main.container {
       min-width: 256px;
       max-width: 768px;
-      width: 90%;
+      width: 80%;
     }
 
     section {
       padding: 32px;
     }
 
-    .todo-list {
+    .list {
       margin: 0;
       padding: 0;
       list-style: none;
       user-select: none;
     }
 
-    .todo-list li {
+    .list li {
       position: relative;
       border-bottom: 1px solid #${hexGray};
       padding: 16px 24px;
     }
 
-    .todo-list li .tags {
+    .list li .tags {
       padding: 0;
       list-style: none;
       font-size: 14px;
       display: flex;
     }
 
-    .todo-list li .tags li {
+    .list li .tags li {
       border: 1px solid #333;
       width: fit-content;
       padding: 0 28px 0 16px;
       margin: 16px 8px 0 8px;
     }
 
-    .todo-list li .tags li .remove-tag {
+    .list li .tags li .remove-tag {
       margin-top: 7px;
       border: none;
       position: absolute;
@@ -214,14 +248,14 @@ let ScopedStyles = () => (
       opacity: 0.2;
       right: 8px;
     }
-    .todo-list li .tags li .remove-tag:hover {
+    .list li .tags li .remove-tag:hover {
       opacity: 1;
       cursor: pointer;
       color: red;
       font-weight: bolder;
     }
 
-    .todo-list li.updating .update-todo {
+    .list li.updating .update-todo {
       display: block;
       background: transparent;
       color: inherit;
@@ -231,11 +265,11 @@ let ScopedStyles = () => (
       margin-top: 8px;
     }
 
-    .todo-list li .update-todo {
+    .list li .update-todo {
       display: none;
     }
 
-    .todo-list li .delete-todo {
+    .list li .delete {
       border: none;
       position: absolute;
       right: 24px;
@@ -243,7 +277,7 @@ let ScopedStyles = () => (
       opacity: 0.2;
       color: orange;
     }
-    .todo-list li .delete-todo:hover {
+    .list li .delete:hover {
       opacity: 1;
       cursor: pointer;
       color: red;
