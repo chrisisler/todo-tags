@@ -3,5 +3,6 @@
   "trailingComma": "all",
   "bracketSpacing": true,
   "semi": false,
-  "arrowParens": "avoid"
+  "arrowParens": "avoid",
+  "requirePragma": true
 }

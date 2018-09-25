@@ -1,6 +1,6 @@
 # Todo Tags
 
-**Todo app with tagging.**
+> Todo app with tagging.
 
 Built using [Next](nextjs.org).
 
@@ -14,12 +14,12 @@ yarn dev
 
 ## To do
 
-- Write tags feature
+- `actions.todos.tags.add` (and `actions.todos.doubleClicked` ref usage?)
 - Write tests
-- Set placeholder of todo input as clipboard contents, fallback to normal placeholder
 
 ## Learned
 
 - The `<label>` html tag exists
 - CSS is hard (duh)
 - CSS duplication can be overdone and underutilized (tough balance)
+- Couldn't easily find way to share state between nextjs pages.

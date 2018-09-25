@@ -1,3 +1,6 @@
+/** @flow */
+/** @prettier */
+
 import { Component } from 'react'
 import Head from 'next/head'
 
@@ -33,13 +36,13 @@ export default class extends Component {
           }
         }
       },
-      doubleClicked: event => {
+      doubleClicked: (event) => {
         if (this.doubleClickedRef !== void 0) {
           this.doubleClickedRef.classList.remove('updating')
         }
         this.doubleClickedRef = event.currentTarget.parentNode
         this.doubleClickedRef.classList.add('updating')
-        document.querySelector('.list li.updating input.update-todo').focus()
+        // document.querySelector('.list li.updating input.update-todo').focus()
       },
       update: (event, index) => {
         let updatedTitle = event.currentTarget.value
@@ -63,7 +66,9 @@ export default class extends Component {
         this.setState({ todos })
       },
       tags: {
-        // add: () => {},
+        add: event => {
+          console.log('----- TODO: added tag -----')
+        },
         remove: (todoIndex, tagIndex) => {
           // There's a way to do this with better runtime analysis.
           let todos = this.state.todos.slice()
@@ -118,6 +123,12 @@ export default class extends Component {
             onKeyDown={event => actions.todos.update(event, todoIndex)}
             onBlur={event => actions.todos.update(event, todoIndex)}
           />
+          <select className="add-tag" onChange={event => actions.todos.tags.add(event)}>
+            <option value="">Add tag...</option>
+            {tags.map(tag => (
+              <option key={tag.name}>{tag.name}</option>
+            ))}
+          </select>
         </li>
       )
     })
@@ -255,6 +266,10 @@ let ScopedStyles = () => (
       font-weight: bolder;
     }
 
+    .list li.updating {
+      display: block;
+    }
+
     .list li.updating .update-todo {
       display: block;
       background: transparent;
@@ -263,10 +278,19 @@ let ScopedStyles = () => (
       border: 1px solid #${hexGray};
       padding: 8px 16px;
       margin-top: 8px;
+      font-size: smaller;
     }
-
     .list li .update-todo {
       display: none;
+    }
+
+    .list li.updating .add-tag {
+      width: 100%;
+      margin: 16px auto;
+      display: block;
+    }
+    .list li .add-tag {
+      display: none
     }
 
     .list li .delete {
