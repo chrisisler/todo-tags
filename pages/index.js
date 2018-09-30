@@ -45,13 +45,13 @@ export default class extends Component {
         // document.querySelector('.list li.updating input.update-todo').focus()
       },
       update: (event, index) => {
-        let updatedTitle = event.currentTarget.value
+        let nextTitle = event.currentTarget.value
         let { todos } = this.state
-        if (validTitle(updatedTitle, todos)) {
+        if (validTitle(nextTitle, todos)) {
           if (event.key === 'Enter' || event.type === 'blur') {
-            let updatedTodos = todos.slice()
-            updatedTodos[index].title = updatedTitle
-            this.setState({ todos: updatedTodos })
+            let nextTodos = todos.slice()
+            nextTodos[index].title = nextTitle
+            this.setState({ todos: nextTodos })
             this.doubleClickedRef.classList.remove('updating')
           }
         } else {
@@ -66,8 +66,12 @@ export default class extends Component {
         this.setState({ todos })
       },
       tags: {
-        add: event => {
-          console.log('----- TODO: added tag -----')
+        add: (event, todoIndex) => {
+          this.doubleClickedRef.classList.remove('updating')
+          let newTag = { name: event.currentTarget.value }
+          let nextTodos = this.state.todos.slice()
+          nextTodos[todoIndex].tags.push(newTag)
+          this.setState({ todos: nextTodos })
         },
         remove: (todoIndex, tagIndex) => {
           // There's a way to do this with better runtime analysis.
@@ -123,7 +127,7 @@ export default class extends Component {
             onKeyDown={event => actions.todos.update(event, todoIndex)}
             onBlur={event => actions.todos.update(event, todoIndex)}
           />
-          <select className="add-tag" onChange={event => actions.todos.tags.add(event)}>
+          <select className="add-tag" onChange={event => actions.todos.tags.add(event, todoIndex)}>
             <option value="">Add tag...</option>
             {tags.map(tag => (
               <option key={tag.name}>{tag.name}</option>
