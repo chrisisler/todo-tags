@@ -68,16 +68,20 @@ export default class extends Component {
       tags: {
         add: (event, todoIndex) => {
           this.doubleClickedRef.classList.remove('updating')
-          let newTag = { name: event.currentTarget.value }
+          let tagName = event.currentTarget.value 
+          if (tagName === '') {
+            return
+          }
+          let newTag = { name: tagName }
           let nextTodos = this.state.todos.slice()
           nextTodos[todoIndex].tags.push(newTag)
           this.setState({ todos: nextTodos })
         },
         remove: (todoIndex, tagIndex) => {
           // There's a way to do this with better runtime analysis.
-          let todos = this.state.todos.slice()
-          todos[todoIndex].tags.splice(tagIndex, 1)
-          this.setState({ todos })
+          let nextTodos = this.state.todos.slice()
+          nextTodos[todoIndex].tags.splice(tagIndex, 1)
+          this.setState({ todos: nextTodos })
         },
       },
     },

@@ -14,7 +14,7 @@ yarn dev
 
 ## To do
 
-- `actions.todos.tags.add` (and `actions.todos.doubleClicked` ref usage?)
+- Back end persistence
 - Write tests
 
 ## Learned
