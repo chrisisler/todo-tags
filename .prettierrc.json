@@ -1,8 +1,10 @@
 {
   "singleQuote": true,
-  "trailingComma": "all",
+  "trailingComma": "none",
+  "printWidth": 100,
   "bracketSpacing": true,
   "semi": false,
+  "parser": "babylon",
   "arrowParens": "avoid",
-  "requirePragma": true
+  "requirePragma": false
 }

@@ -4,39 +4,22 @@
 import { Component } from 'react'
 import Head from 'next/head'
 
-export default class extends Component {
+export default class App extends Component {
   state = schema()
   actions = {
-    tags: {
-      create: event => {
-        let name = event.currentTarget.value
-        let { tags } = this.state
-        if (name.length >= 1 && !tags.some(tag => tag.name === name)) {
-          if (event.key === 'Enter') {
-            let tag = { name }
-            this.setState({ tags: tags.concat(tag) })
-            event.currentTarget.value = ''
-          }
-        }
-      },
-      delete: tagName => {
-        let tags = this.state.tags.filter(tag => tag.name !== tagName)
-        this.setState({ tags })
-      },
-    },
     todos: {
       create: event => {
         let title = event.currentTarget.value
         let { todos } = this.state
-        if (validTitle(title, todos)) {
+        if (title.length >= 1 && !todos.some(todo => todo.title === title)) {
           if (event.key === 'Enter') {
-            let todo = { title, done: false }
+            let todo = { title, done: false, tags: [] }
             this.setState({ todos: todos.concat(todo) })
             event.currentTarget.value = ''
           }
         }
       },
-      doubleClicked: (event) => {
+      doubleClicked: event => {
         if (this.doubleClickedRef !== void 0) {
           this.doubleClickedRef.classList.remove('updating')
         }
@@ -47,7 +30,7 @@ export default class extends Component {
       update: (event, index) => {
         let nextTitle = event.currentTarget.value
         let { todos } = this.state
-        if (validTitle(nextTitle, todos)) {
+        if (nextTitle.length > 1 && !todos.some(todo => todo.title === nextTitle)) {
           if (event.key === 'Enter' || event.type === 'blur') {
             let nextTodos = todos.slice()
             nextTodos[index].title = nextTitle
@@ -68,7 +51,7 @@ export default class extends Component {
       tags: {
         add: (event, todoIndex) => {
           this.doubleClickedRef.classList.remove('updating')
-          let tagName = event.currentTarget.value 
+          let tagName = event.currentTarget.value
           if (tagName === '') {
             return
           }
@@ -82,9 +65,26 @@ export default class extends Component {
           let nextTodos = this.state.todos.slice()
           nextTodos[todoIndex].tags.splice(tagIndex, 1)
           this.setState({ todos: nextTodos })
-        },
-      },
+        }
+      }
     },
+    tags: {
+      create: event => {
+        let name = event.currentTarget.value
+        let { tags } = this.state
+        if (name.length >= 1 && !tags.some(tag => tag.name === name)) {
+          if (event.key === 'Enter') {
+            let tag = { name }
+            this.setState({ tags: tags.concat(tag) })
+            event.currentTarget.value = ''
+          }
+        }
+      },
+      delete: tagName => {
+        let tags = this.state.tags.filter(tag => tag.name !== tagName)
+        this.setState({ tags })
+      }
+    }
   }
 
   render() {
@@ -96,7 +96,7 @@ export default class extends Component {
 
     let renderedTodos = todos.map((todo, todoIndex) => {
       let renderedTags =
-        todo.tags.length &&
+        todo.tags.length > 0 &&
         todo.tags.map((tag, tagIndex) => {
           return (
             <li key={tag.name}>
@@ -117,10 +117,7 @@ export default class extends Component {
         <li key={todo.title}>
           <div onDoubleClick={actions.todos.doubleClicked}>
             <label>{todo.title}</label>
-            <button
-              className="delete"
-              onClick={_ => actions.todos.delete(todo.title)}
-            >
+            <button className="delete" onClick={_ => actions.todos.delete(todo.title)}>
               X
             </button>
           </div>
@@ -131,12 +128,17 @@ export default class extends Component {
             onKeyDown={event => actions.todos.update(event, todoIndex)}
             onBlur={event => actions.todos.update(event, todoIndex)}
           />
-          <select className="add-tag" onChange={event => actions.todos.tags.add(event, todoIndex)}>
-            <option value="">Add tag...</option>
-            {tags.map(tag => (
-              <option key={tag.name}>{tag.name}</option>
-            ))}
-          </select>
+          {tags.length > 0 && (
+            <select
+              className="add-tag"
+              onChange={event => actions.todos.tags.add(event, todoIndex)}
+            >
+              <option value="">Add tag...</option>
+              {tags.map(tag => (
+                <option key={tag.name}>{tag.name}</option>
+              ))}
+            </select>
+          )}
         </li>
       )
     })
@@ -177,10 +179,7 @@ export default class extends Component {
                 {tags.map(tag => (
                   <li key={tag.name}>
                     <label>{tag.name}</label>
-                    <button
-                      className="delete"
-                      onClick={_ => actions.tags.delete(tag.name)}
-                    >
+                    <button className="delete" onClick={_ => actions.tags.delete(tag.name)}>
                       X
                     </button>
                   </li>
@@ -298,7 +297,7 @@ let ScopedStyles = () => (
       display: block;
     }
     .list li .add-tag {
-      display: none
+      display: none;
     }
 
     .list li .delete {
@@ -385,38 +384,34 @@ let GlobalStyles = () => (
   `}</style>
 )
 
-function validTitle(string, todos) {
-  return string.length >= 1 && !todos.some(todo => todo.title === string)
-}
-
 function schema() {
   return {
     todos: [
       {
         title: 'fake-todo-title-string',
         done: false,
-        tags: [],
+        tags: []
       },
       {
         title: 'fake-todo-title-string2',
         done: false,
         tags: [
           {
-            name: 'major problem',
+            name: 'major problem'
           },
           {
-            name: 'good first problem',
-          },
-        ],
-      },
+            name: 'good first problem'
+          }
+        ]
+      }
     ],
     tags: [
       {
-        name: 'major problem',
+        name: 'major problem'
       },
       {
-        name: 'good first problem',
-      },
-    ],
+        name: 'good first problem'
+      }
+    ]
   }
 }
