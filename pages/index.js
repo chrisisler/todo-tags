@@ -87,6 +87,15 @@ export default class App extends Component {
     }
   }
 
+  async componentWillMount() {
+    try {
+      let r = await fetch('http://localhost:3020')
+      console.log('r is:', r)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   render() {
     // prettier-ignore
     let {

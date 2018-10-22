@@ -23,3 +23,10 @@ yarn dev
 - CSS is hard (duh)
 - CSS duplication can be overdone and underutilized (tough balance)
 - Couldn't easily find way to share state between nextjs pages.
+
+## Reading
+
+- https://github.com/kriasoft/node-sqlite/tree/master/src
+- https://github.com/mapbox/node-sqlite3/wiki/API
+- https://github.com/dtao/todo-backend-express
+- http://www.todobackend.com/contribute.html
